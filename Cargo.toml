@@ -4,7 +4,7 @@ version = "1.0.0"
 edition = "2021"
 authors = ["ReticulumChat Contributors"]
 description = "A chat client for the Reticulum mesh network"
-license = "MIT"
+license = "Apache-2.0"
 repository = "https://github.com/reticulumchat/reticulumchat"
 
 [dependencies]
