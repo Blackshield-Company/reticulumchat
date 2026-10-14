@@ -1,5 +1,7 @@
 use anyhow::Result;
-use notify_rust::{Notification, Urgency};
+use notify_rust::Notification;
+#[cfg(all(unix, not(target_os = "macos")))]
+use notify_rust::Urgency;
 
 /// Desktop notification service for ReticulumChat
 pub struct NotificationService {
@@ -61,7 +63,7 @@ impl NotificationService {
             .body(preview)
             .icon("dialog-information")
             .appname(&self.app_name)
-            .urgency(Urgency::Normal)
+            .urgency_if_supported(Level::Normal)
             .show()?;
 
         Ok(())
@@ -78,7 +80,7 @@ impl NotificationService {
             .body(preview)
             .icon("dialog-warning")
             .appname(&self.app_name)
-            .urgency(Urgency::Critical)
+            .urgency_if_supported(Level::Critical)
             .show()?;
 
         Ok(())
@@ -95,7 +97,7 @@ impl NotificationService {
             .body(preview)
             .icon("dialog-information")
             .appname(&self.app_name)
-            .urgency(Urgency::Normal)
+            .urgency_if_supported(Level::Normal)
             .show()?;
 
         Ok(())
@@ -115,7 +117,7 @@ impl NotificationService {
             ))
             .icon("dialog-information")
             .appname(&self.app_name)
-            .urgency(Urgency::Low)
+            .urgency_if_supported(Level::Low)
             .show()?;
 
         Ok(())
@@ -132,7 +134,7 @@ impl NotificationService {
             .body(preview)
             .icon("dialog-information")
             .appname(&self.app_name)
-            .urgency(Urgency::Normal)
+            .urgency_if_supported(Level::Normal)
             .show()?;
 
         Ok(())
@@ -149,7 +151,7 @@ impl NotificationService {
             .body(body)
             .icon("dialog-information")
             .appname(&self.app_name)
-            .urgency(Urgency::Normal)
+            .urgency_if_supported(Level::Normal)
             .show()?;
 
         Ok(())
@@ -159,6 +161,35 @@ impl NotificationService {
 impl Default for NotificationService {
     fn default() -> Self {
         Self::new("ReticulumChat")
+    }
+}
+
+enum Level {
+    Low,
+    Normal,
+    Critical,
+}
+
+trait UrgencyExt {
+    fn urgency_if_supported(&mut self, level: Level) -> &mut Self;
+}
+
+#[cfg(all(unix, not(target_os = "macos")))]
+impl UrgencyExt for Notification {
+    fn urgency_if_supported(&mut self, level: Level) -> &mut Self {
+        match level {
+            Level::Low => self.urgency(Urgency::Low),
+            Level::Normal => self.urgency(Urgency::Normal),
+            Level::Critical => self.urgency(Urgency::Critical),
+        }
+    }
+}
+
+#[cfg(not(all(unix, not(target_os = "macos"))))]
+impl UrgencyExt for Notification {
+    #[allow(unused_variables)]
+    fn urgency_if_supported(&mut self, level: Level) -> &mut Self {
+        self
     }
 }
 
