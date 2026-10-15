@@ -1,3 +1,5 @@
+![reticulumchat](.github/preview.png)
+
 # ReticulumChat
 
 [![CI](https://github.com/reticulumchat/reticulumchat/actions/workflows/ci.yml/badge.svg)](https://github.com/reticulumchat/reticulumchat/actions/workflows/ci.yml)
